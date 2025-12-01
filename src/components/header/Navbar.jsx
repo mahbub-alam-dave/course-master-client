@@ -4,9 +4,9 @@ import React from "react";
 
 const Navbar = () => {
   return (
-    <div className="navbar max-w-[1440px] mx-auto h-[100px] bg-base-100">
+    <div className="navbar max-w-[1600px] mx-auto h-[100px] bg-base-100">
       <div className="navbar-start">
-            <Image width={50} height={50} src={"https://i.ibb.co/v4snWN4v/graduation-hat.png"} alt="Course Master" />
+            <Image width={50} height={50} src={"https://i.ibb.co/h1X8n478/graduation-hat-1.png"} alt="Course Master" />
         <a className="btn btn-ghost text-xl md:text-2xl text-blue-500">Course Master</a>
       </div>
 

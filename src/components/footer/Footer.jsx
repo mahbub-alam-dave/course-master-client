@@ -3,13 +3,12 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="footer max-w-[1440px] mx-auto sm:footer-horizontal  text-base p-10 ">
+    <footer className="footer max-w-[1600px] mx-auto sm:footer-horizontal  text-base p-10 ">
       <aside>
-    <Image width={50} height={50} src={"https://i.ibb.co/v4snWN4v/graduation-hat.png"} alt="Course Master" />
-    <p>
-      Course Master
-      <br />
-      We vow to skill up your career
+    <Image width={50} height={50} src={"https://i.ibb.co/h1X8n478/graduation-hat-1.png"} alt="Course Master" />
+    <h2 className="text-xl font-bold">Course Master</h2>
+    <p className="">
+      We vow to skill up your career. Let&apos;s start together
     </p>
   </aside>
       <nav>
