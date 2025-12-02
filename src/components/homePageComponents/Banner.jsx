@@ -5,16 +5,16 @@ import React from 'react';
 const Banner = () => {
     return (
         <div
-  className="hero min-h-[75vh] max-w-[1600px] object-center w-full mx-auto rounded-2xl"
+  className="hero min-h-[75vh]  object-center w-full"
   style={{
     backgroundImage:
       "url(https://i.ibb.co/5hQHBxMP/banner-image-four.jpg)",
   }}
 >
-  <div className="hero-overlay rounded-2xl"></div>
+  <div className="hero-overlay"></div>
   <div className="hero-content text-neutral-content text-center">
-    <div className="max-w-xl">
-      <h1 className="mb-5 text-4xl font-bold">Level Up Your Skills with the New Era of Learning</h1>
+    <div className="max-w-2xl">
+      <h1 className="mb-5 text-4xl lg:text-5xl font-bold">Level Up Your Skills with the New Era of Learning</h1>
       <p className="mb-5 text-lg w-full">
         Master the latest technologies and accelerate your career growth. Start your journey today with Course Master, your gateway to industry-ready skills.
       </p>

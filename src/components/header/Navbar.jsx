@@ -1,17 +1,29 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const Navbar = () => {
+   const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
-    <div className="navbar max-w-[1600px] mx-auto h-[100px] bg-base-100">
-      <div className="navbar-start">
-            <Image width={50} height={50} src={"https://i.ibb.co/h1X8n478/graduation-hat-1.png"} alt="Course Master" />
-        <a className="btn btn-ghost text-xl md:text-2xl text-blue-500">Course Master</a>
+    <div className="">
+    <div className={`w-full fixed top-0 z-[1000] bg-blue-50/40 shadow-md shadow-gray-50 ${scrolled ? "backdrop-blur-xl ": ""}`}>
+    <div className="navbar max-w-[1600px] h-[100px] mx-auto p-4 sm:p-6 lg:p-8">
+      <div className={`navbar-start`}>
+            <Image width={50} height={50} src={"https://i.ibb.co/h1X8n478/graduation-hat-1.png"} alt="Course Master" className={`${scrolled? "": ""}`} />
+        <Link href={"/"} className={`pl-2 font-semibold text-xl md:text-2xl text-[var(--color-primary)] ${scrolled? "text-blue-600": ""}`}>Course Master</Link>
       </div>
 
       <div className="navbar-end">
-        <ul className="menu menu-horizontal px-1 pr-6 text-base">
+        <ul className={` px-1 pr-6 hidden text-lg font-semibold lg:flex gap-6 ${scrolled? "" : "text-black"}`}>
           <li>
             <Link href={"/"}>Home</Link>
           </li>
@@ -26,7 +38,7 @@ const Navbar = () => {
           </li>
         </ul>
         <Link href={"/login"}>
-                  <button className="bg-blue-500 px-6 py-3 rounded-3xl text-lg text-white font-semibold">
+                  <button className={`bg-[var(--color-primary)] px-6 py-3 rounded-3xl text-lg text-white font-semibold ${scrolled? "bg-blue-600": ""}`}>
                       login
                   </button>
         </Link>
@@ -73,6 +85,8 @@ const Navbar = () => {
           </li>
         </ul>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

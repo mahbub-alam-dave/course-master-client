@@ -1,15 +1,24 @@
 import Image from "next/image";
 import React from "react";
+import { FaLocationDot } from "react-icons/fa6";
+import { FaPhone } from "react-icons/fa";
+import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="footer max-w-[1600px] mx-auto sm:footer-horizontal  text-base p-10 ">
+    <footer className=" ">
+      <div className="footer max-w-[1600px] mx-auto sm:footer-horizontal  text-base px-4 sm:px-6 lg:px-8 py-12 ">
       <aside>
-    <Image width={50} height={50} src={"https://i.ibb.co/h1X8n478/graduation-hat-1.png"} alt="Course Master" />
-    <h2 className="text-xl font-bold">Course Master</h2>
+    <div className="flex  items-center">            
+      <Image width={50} height={50} src={"https://i.ibb.co/h1X8n478/graduation-hat-1.png"} alt="Course Master" />
+        <Link href={"/"} className="pl-2 font-semibold text-xl md:text-2xl text-[var(--color-primary)]">Course Master</Link></div>
+    <div className="">
     <p className="">
       We vow to skill up your career. Let&apos;s start together
     </p>
+    <p className="flex gap-1 items-center"><FaLocationDot /> 123, Green road, Dhaka</p>
+    <p className="flex gap-1 items-center"><FaPhone /> phone: +000 022 222</p>
+    </div>
   </aside>
       <nav>
         <h6 className="footer-title">Company</h6>
@@ -56,6 +65,10 @@ const Footer = () => {
           </a>
         </div>
       </nav>
+      </div>
+        <aside className="px-4 w-full sm:px-6 lg:px-8 py-8 bg-gray-50 text-center">
+    <p>Copyright © {new Date().getFullYear()} - All right reserved by Course Master</p>
+  </aside>
     </footer>
   );
 };

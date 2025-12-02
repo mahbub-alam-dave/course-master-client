@@ -5,7 +5,6 @@ const Home = () => {
     return (
         <div className='min-h-[60vh] w-full'>
             <Banner />
-            This is Home Page component
         </div>
     );
 };
