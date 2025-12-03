@@ -14,9 +14,10 @@ export default function CoursesSection() {
 
   const fetchRandomCourses = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API}/courses/random-courses`);
+      // const res = await fetch(`http://localhost:5000/api/courses/random-courses`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/courses/random-courses`);
       const data = await res.json();
-
+      console.log(data)
       if (data.success) {
         setCourses(data.data);
       }

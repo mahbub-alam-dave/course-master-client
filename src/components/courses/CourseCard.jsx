@@ -2,12 +2,12 @@ import Link from "next/link";
 import { Star, Clock, BookOpen, TrendingUp } from "lucide-react";
 
 export default function CourseCard({ course }) {
-  const courseId = course._id || course.id;
+  const courseId = course._id;
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
       {/* Course Thumbnail */}
-      <div className="relative h-48 bg-gray-200">
+      <div className="relative h-62 bg-gray-200">
         {course.thumbnail ? (
           <img
             src={course.thumbnail}
@@ -102,7 +102,7 @@ export default function CourseCard({ course }) {
           </div>
           
           <Link
-            href={`/courses/${courseId}`}
+            href={`http://localhost:3000/courses/${courseId}`}
             className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded hover:bg-blue-700 transition-colors"
           >
             View Details
