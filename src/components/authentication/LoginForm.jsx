@@ -2,16 +2,51 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import SocialLogin from "./SocialLogin";
-
+import { useRouter } from "next/navigation";
 
 
 const LoginForm = () => {
 const [loading, setLoading] = useState(false)
 const [error, setError] = useState("");
+const router = useRouter()
 
-const handleLogin = () =>{
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-}
+    const form = new FormData(e.target);
+    const email = form.get("email");
+    const password = form.get("password");
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok && data.token) {
+        // Save JWT token
+        localStorage.setItem("token", data.token);
+
+        alert("Login successful!");
+        router.push("/")
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div>
       {/* ✅ Full Screen Loading Overlay */}

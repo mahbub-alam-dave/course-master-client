@@ -2,9 +2,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
    const [scrolled, setScrolled] = useState(false);
+
+   const {user, setUser} = useAuth()
+
+   console.log(user)
 
     useEffect(() => {
     const handleScroll = () => {
@@ -13,9 +18,19 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+
+
+    const handleLogout = () => {
+    localStorage.removeItem("token");
+    
+    window.location.href = "/"; // optional redirect to homepage
+  };
+
   return (
     <div className="">
-    <div className={`w-full fixed top-0 z-[1000] bg-blue-50/40 shadow-md shadow-gray-50 ${scrolled ? "backdrop-blur-xl ": ""}`}>
+      {/* shadow-md shadow-gray-50 */}
+    <div className={`w-full fixed top-0 z-[1000] border-b border-gray-50 ${scrolled ? "bg-blue-50/40 backdrop-blur-xl ": ""}`}>
     <div className="navbar max-w-[1600px] h-[100px] mx-auto p-4 sm:p-6 lg:p-8">
       <div className={`navbar-start`}>
             <Image width={50} height={50} src={"https://i.ibb.co/h1X8n478/graduation-hat-1.png"} alt="Course Master" className={`${scrolled? "": ""}`} />
@@ -37,11 +52,17 @@ const Navbar = () => {
             <Link href={"/"}>Contact</Link>
           </li>
         </ul>
+        {user? 
+          <button onClick={handleLogout} className={`bg-[var(--color-primary)] px-6 py-3 rounded-3xl text-lg text-white font-semibold ${scrolled? "bg-blue-600": ""}`}>
+                      logout
+          </button>
+        :
         <Link href={"/login"}>
                   <button className={`bg-[var(--color-primary)] px-6 py-3 rounded-3xl text-lg text-white font-semibold ${scrolled? "bg-blue-600": ""}`}>
                       login
                   </button>
         </Link>
+      }
       </div>
       {/* sidebar */}
       <div className="dropdown">
