@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-// import CheckoutForm from "./CheckoutForm";
 import { X, Loader2 } from "lucide-react";
+import CheckoutForm from "./CheckoutForm";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -148,10 +148,10 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
               options={{ clientSecret, appearance }}
               stripe={stripePromise}
             >
-{/*               <CheckoutForm
+              <CheckoutForm
                 courseId={course._id || course.id}
                 onSuccess={handleSuccess}
-              /> */}
+              />
             </Elements>
           ) : (
             <div className="text-center text-red-600 py-8">
