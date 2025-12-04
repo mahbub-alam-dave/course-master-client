@@ -43,7 +43,7 @@ export default function CheckoutForm({ courseId, onSuccess }) {
         const token = localStorage.getItem("token"); // Or get from your auth context
         
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API}/payment/confirm-payment`,
+          `${process.env.NEXT_PUBLIC_API}/api/payment/confirm-payment`,
           {
             method: "POST",
             headers: {

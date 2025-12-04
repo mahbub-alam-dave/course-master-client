@@ -30,13 +30,13 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
       }
 
       const amount = course.discountPrice || course.price;
-      const courseId = course._id || course.id;
+      const courseId = course._id;
 
       // Save courseId for payment success page
       localStorage.setItem("pendingCourseEnrollment", courseId);
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/payment/create-payment-intent`,
+        `${process.env.NEXT_PUBLIC_API}/api/payment/create-payment-intent`,
         {
           method: "POST",
           headers: {
