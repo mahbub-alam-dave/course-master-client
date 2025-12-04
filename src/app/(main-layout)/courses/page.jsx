@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import CourseCard from "@/components/CourseCard";
-import Pagination from "@/components/Pagination";
+import CourseCard from "@/components/courses/CourseCard";
 import { Search, Filter } from "lucide-react";
+import Pagination from "@/components/pagination/Pagination";
 
 export default function CoursesPage() {
   const router = useRouter();
@@ -29,7 +29,7 @@ export default function CoursesPage() {
     try {
       const queryParams = new URLSearchParams({
         page: currentPage,
-        limit: 9,
+        limit: 4,
         ...(category && { category }),
         ...(level && { level }),
         ...(search && { search })
@@ -118,7 +118,7 @@ export default function CoursesPage() {
                   placeholder="Search courses..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none border-[var(--color-border)]"
                 />
               </div>
               <button
@@ -136,7 +136,7 @@ export default function CoursesPage() {
             <select
               value={category}
               onChange={(e) => handleFilterChange("category", e.target.value)}
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border rounded-lg focus:outline-none border-[var(--color-border)]"
             >
               <option value="">All Categories</option>
               <option value="Web Development">Web Development</option>
@@ -150,7 +150,7 @@ export default function CoursesPage() {
             <select
               value={level}
               onChange={(e) => handleFilterChange("level", e.target.value)}
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border rounded-lg focus:outline-none border-[var(--color-border)]"
             >
               <option value="">All Levels</option>
               <option value="Beginner">Beginner</option>

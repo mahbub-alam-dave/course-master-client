@@ -22,41 +22,60 @@ const CourseDetailsPage = () => {
   const router = useRouter();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [enrolling, setEnrolling] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
     useEffect(() => {
     if (params.courseId) {
       fetchCourseDetails();
+      checkEnrollmentStatus()
     }
   }, [params.courseId]);
 
-  console.log(params.courseId)
-  console.log(course)
   const fetchCourseDetails = async () => {
     try {
-/*       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/api/courses/${params.courseId}`
-      ); */
       const res = await fetch(
-        `http://localhost:5000/api/courses/${params.courseId}`
+        `${process.env.NEXT_PUBLIC_API}/api/courses/${params.courseId}`
       );
       const data = await res.json();
       console.log(data.data)
 
       if (data.success) {
         setCourse(data.data);
-      } /* else {
+      }  else {
         router.push("/courses");
-      } */
+      } 
     } catch (error) {
       console.error("Error fetching course details:", error);
-      // router.push("/courses");
+      router.push("/courses");
     } finally {
       setLoading(false);
     }
   };
 
+  const checkEnrollmentStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
+      // Check if user is already enrolled
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API}/enrollments/check/${params.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (data.success && data.isEnrolled) {
+        setIsEnrolled(true);
+      }
+    } catch (error) {
+      console.error("Error checking enrollment:", error);
+    }
+  };
 
   const handleEnroll = async () => {
     setEnrolling(true);
@@ -74,6 +93,28 @@ const CourseDetailsPage = () => {
     } finally {
       setEnrolling(false);
     }
+  };
+
+    const handleEnrollClick = () => {
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+      alert("Please login to enroll in this course");
+      router.push("/login");
+      return;
+    }
+
+    setShowPaymentModal(true);
+  };
+
+    const handlePaymentSuccess = (paymentData) => {
+    setIsEnrolled(true);
+    alert("Successfully enrolled! Welcome to the course.");
+    router.push("/dashboard/my-courses");
+  };
+
+  const handleAccessCourse = () => {
+    router.push(`/learn/${params.id}`);
   };
 
   if (loading) {
@@ -289,13 +330,21 @@ const CourseDetailsPage = () => {
               </div>
 
               {/* Enroll Button */}
-              <button
-                onClick={handleEnroll}
-                disabled={enrolling}
-                className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed mb-4"
-              >
-                {enrolling ? "Enrolling..." : "Enroll Now"}
-              </button>
+              {isEnrolled ? (
+                <button
+                  onClick={handleAccessCourse}
+                  className="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors mb-4"
+                >
+                  Access Course
+                </button>
+              ) : (
+                <button
+                  onClick={handleEnrollClick}
+                  className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors mb-4"
+                >
+                  Enroll Now
+                </button>
+              )}
 
               {/* Course Info */}
               <div className="space-y-4 pt-4 border-t">

@@ -83,7 +83,7 @@ export default function CourseCard({ course }) {
         </div>
 
         {/* Price & Button */}
-        <div className="flex items-center justify-between pt-4 border-t">
+        <div className="flex items-center justify-between pt-4 border-t border-[var(--color-border)]">
           <div>
             {course.discountPrice ? (
               <div className="flex items-center gap-2">

@@ -5,17 +5,19 @@ import React from 'react';
 const Banner = () => {
     return (
         <div
-  className="hero min-h-[75vh]  object-center w-full"
+  className="hero min-h-[75vh]  object-center w-full relative"
   style={{
     backgroundImage:
       "url(https://i.ibb.co/5hQHBxMP/banner-image-four.jpg)",
   }}
 >
-  <div className="hero-overlay"></div>
+  {/* <div className="hero-overlay"></div> */}
+  <div className="absolute inset-0 bg-blue-900/25"></div>
+
   <div className="hero-content text-neutral-content text-center">
     <div className="max-w-2xl">
-      <h1 className="mb-5 text-4xl lg:text-5xl font-bold">Level Up Your Skills with the New Era of Learning</h1>
-      <p className="mb-5 text-lg w-full">
+      <h1 className="mb-5 text-4xl lg:text-5xl font-bold text-white drop-shadow-[0_4px_3px_rgba(133,25,198)]">Level Up Your Skills with the New Era of Learning</h1>
+      <p className="mb-5 text-white text-lg w-full drop-shadow-[0_2px_2px_rgba(150,76,180,0.8)]">
         Master the latest technologies and accelerate your career growth. Start your journey today with Course Master, your gateway to industry-ready skills.
       </p>
       <button className="btn bg-white text-blue-500 text-lg">Get Started</button>
