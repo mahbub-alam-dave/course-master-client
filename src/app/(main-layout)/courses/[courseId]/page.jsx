@@ -16,6 +16,7 @@ import {
   Globe,
   TrendingUp
 } from "lucide-react";
+import PaymentModal from "@/components/payments/PaymentModal";
 
 const CourseDetailsPage = () => {
   const params = useParams();
@@ -60,7 +61,7 @@ const CourseDetailsPage = () => {
 
       // Check if user is already enrolled
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/enrollments/check/${params.id}`,
+        `${process.env.NEXT_PUBLIC_API}/api/enrollments/check/${params.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -412,6 +413,13 @@ const CourseDetailsPage = () => {
           </div>
         </div>
       </div>
+            {/* Payment Modal */}
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        course={course}
+        onSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 }
