@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import { X, Loader2 } from "lucide-react";
 import CheckoutForm from "./CheckoutForm";
+import { X, Loader2 } from "lucide-react";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -21,7 +21,7 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
   const createPaymentIntent = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token"); // Or get from your auth context
+      const token = localStorage.getItem("token");
 
       if (!token) {
         alert("Please login to enroll in this course");
@@ -30,10 +30,6 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
       }
 
       const amount = course.discountPrice || course.price;
-      const courseId = course._id;
-
-      // Save courseId for payment success page
-      localStorage.setItem("pendingCourseEnrollment", courseId);
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API}/api/payment/create-payment-intent`,
@@ -44,7 +40,7 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            courseId: courseId,
+            courseId: course._id || course.id,
             amount: amount,
             currency: "usd",
           }),
@@ -69,10 +65,8 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
   };
 
   const handleSuccess = (paymentData) => {
-    setTimeout(() => {
-      onSuccess(paymentData);
-      onClose();
-    }, 2000);
+    onSuccess(paymentData);
+    onClose();
   };
 
   if (!isOpen) return null;

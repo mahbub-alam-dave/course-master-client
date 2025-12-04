@@ -25,13 +25,10 @@ export default function CheckoutForm({ courseId, onSuccess }) {
     setIsLoading(true);
     setMessage(null);
 
-    // Confirm payment with Stripe
+    // Confirm payment with Stripe (NO REDIRECT)
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/payment/success`,
-      },
-      redirect: "if_required",
+      redirect: "if_required", // This prevents redirect
     });
 
     if (error) {
@@ -40,7 +37,7 @@ export default function CheckoutForm({ courseId, onSuccess }) {
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
       // Payment successful, now confirm with backend
       try {
-        const token = localStorage.getItem("token"); // Or get from your auth context
+        const token = localStorage.getItem("token");
         
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API}/api/payment/confirm-payment`,
@@ -61,7 +58,10 @@ export default function CheckoutForm({ courseId, onSuccess }) {
 
         if (data.success) {
           setMessage("Payment successful! Redirecting...");
-          onSuccess(data.data);
+          // Call success callback to close modal and redirect
+          setTimeout(() => {
+            onSuccess(data.data);
+          }, 1500);
         } else {
           setMessage(data.message || "Payment confirmation failed");
         }
