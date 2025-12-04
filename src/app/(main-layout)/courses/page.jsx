@@ -36,7 +36,7 @@ export default function CoursesPage() {
       });
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/courses?${queryParams}`
+        `${process.env.NEXT_PUBLIC_API}/api/courses?${queryParams}`
       );
       const data = await res.json();
 
@@ -194,6 +194,12 @@ export default function CoursesPage() {
                 <CourseCard key={course._id || course.id} course={course} />
               ))}
             </div>
+            {/* Pagination */}
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+            />
           </>
         )}
       </div>
