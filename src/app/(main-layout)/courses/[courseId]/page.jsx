@@ -16,6 +16,7 @@ import {
   Globe,
   TrendingUp
 } from "lucide-react";
+import PaymentModal from "@/components/payments/PaymentModal";
 
 const CourseDetailsPage = () => {
   const params = useParams();
@@ -60,7 +61,7 @@ const CourseDetailsPage = () => {
 
       // Check if user is already enrolled
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/enrollments/check/${params.id}`,
+        `${process.env.NEXT_PUBLIC_API}/api/enrollments/check/${params.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -74,24 +75,6 @@ const CourseDetailsPage = () => {
       }
     } catch (error) {
       console.error("Error checking enrollment:", error);
-    }
-  };
-
-  const handleEnroll = async () => {
-    setEnrolling(true);
-    try {
-      // TODO: Implement enrollment logic
-      // This would typically call an API endpoint to enroll the user
-      console.log("Enrolling in course:", course._id || course.id);
-      
-      // Simulated enrollment
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert("Successfully enrolled in the course!");
-    } catch (error) {
-      console.error("Error enrolling:", error);
-      alert("Failed to enroll. Please try again.");
-    } finally {
-      setEnrolling(false);
     }
   };
 
@@ -412,6 +395,13 @@ const CourseDetailsPage = () => {
           </div>
         </div>
       </div>
+            {/* Payment Modal */}
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        course={course}
+        onSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 }
