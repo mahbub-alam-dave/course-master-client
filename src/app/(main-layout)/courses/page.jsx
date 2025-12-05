@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import CourseCard from "@/components/courses/CourseCard";
 import { Search, Filter } from "lucide-react";
 import Pagination from "@/components/pagination/Pagination";
 
-export default function CoursesPage() {
+// Create a separate component that uses useSearchParams
+function CoursesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -204,5 +205,30 @@ export default function CoursesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function CoursesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+          <div className="container mx-auto px-4">
+            <h1 className="text-4xl font-bold mb-4">All Courses</h1>
+            <p className="text-lg opacity-90">Loading courses...</p>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="bg-white rounded-lg shadow-md h-96 animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </div>
+    }>
+      <CoursesContent />
+    </Suspense>
   );
 }
