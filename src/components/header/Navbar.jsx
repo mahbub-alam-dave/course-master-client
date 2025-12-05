@@ -3,12 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import MobileSidebar from "./Sidebar";
 
 const Navbar = () => {
    const [scrolled, setScrolled] = useState(false);
+     const [isOpen, setIsOpen] = useState(false);
 
    const {user, setUser} = useAuth()
-
+   console.log(user)
     useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -25,10 +27,12 @@ const Navbar = () => {
     window.location.href = "/"; // optional redirect to homepage
   };
 
+  const toggleSidebar = () => setIsOpen(!isOpen);
+
   return (
-    <div className="">
+    <div className="relative">
       {/* shadow-md shadow-gray-50 */}
-    <div className={`w-full fixed top-0 z-[1000] border-b border-gray-50 ${scrolled ? "bg-blue-50/40 backdrop-blur-xl ": ""}`}>
+    <div className={`w-full fixed top-0 z-[100] border-b border-gray-50 ${scrolled ? "bg-blue-50/40 backdrop-blur-xl ": ""}`}>
     <div className="navbar max-w-[1600px] h-[100px] mx-auto p-4 sm:p-6 lg:p-8">
       <div className={`navbar-start`}>
             <Image width={50} height={50} src={"https://i.ibb.co/h1X8n478/graduation-hat-1.png"} alt="Course Master" className={`${scrolled? "": ""}`} />
@@ -50,6 +54,7 @@ const Navbar = () => {
             <Link href={"/"}>Contact</Link>
           </li>
         </ul>
+        <div className="hidden sm:block">
         {user? 
           <button onClick={handleLogout} className={`bg-[var(--color-primary)] px-6 py-3 rounded-3xl text-lg text-white font-semibold ${scrolled? "bg-blue-600": ""}`}>
                       logout
@@ -62,8 +67,9 @@ const Navbar = () => {
         </Link>
       }
       </div>
+      </div>
       {/* sidebar */}
-      <div className="dropdown">
+{/*       <div className="dropdown">
         <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -86,26 +92,57 @@ const Navbar = () => {
           className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
         >
           <li>
-            <a>Item 1</a>
+            <Link href={"/"}>Home</Link>
           </li>
           <li>
-            <a>Parent</a>
-            <ul className="p-2">
-              <li>
-                <a>Submenu 1</a>
-              </li>
-              <li>
-                <a>Submenu 2</a>
-              </li>
-            </ul>
+            <Link href={"/courses"}>Courses</Link>
           </li>
           <li>
-            <a>Item 3</a>
+            {user && <Link href={"/dashboard"}>dashboard</Link>}
           </li>
+                  <div className="sm:hidden">
+          {user? 
+          <button onClick={handleLogout} className={`bg-[var(--color-primary)] px-6 py-3 rounded-3xl text-lg text-white font-semibold ${scrolled? "bg-blue-600": ""}`}>
+                      logout
+          </button>
+        :
+        <Link href={"/login"}>
+                  <button className={`bg-[var(--color-primary)] px-6 py-3 rounded-3xl text-lg text-white font-semibold ${scrolled? "bg-blue-600": ""}`}>
+                      login
+                  </button>
+        </Link>
+      }
+        </div>
         </ul>
+
+      </div> */}
+      <div className="lg:hidden">
+        <button
+          onClick={toggleSidebar}
+          className="btn btn-ghost p-2 focus:outline-none"
+          aria-label="Open menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
       </div>
     </div>
     </div>
+      <div>
+        <MobileSidebar user= {user} handleLogout={handleLogout} isOpen={isOpen} setIsOpen={setIsOpen} />
+      </div>
     </div>
   );
 };

@@ -17,6 +17,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import PaymentModal from "@/components/payments/PaymentModal";
+import { useAlert } from "@/hooks/useAlert";
 
 export default function CourseDetailsPage() {
   const params = useParams();
@@ -25,11 +26,15 @@ export default function CourseDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const { showSuccess, showError, showLoading, closeAlert, showWarning } = useAlert();
+
 
   useEffect(() => {
+
     if (params.courseId) {
       fetchCourseDetails();
       checkEnrollmentStatus();
+
     }
   }, [params.courseId]);
 
@@ -59,7 +64,7 @@ export default function CourseDetailsPage() {
       if (!token) return;
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/api/enrollments/check/${params.id}`,
+        `${process.env.NEXT_PUBLIC_API}/api/enrollments/check/${params.courseId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -68,6 +73,7 @@ export default function CourseDetailsPage() {
       );
 
       const data = await res.json();
+      console.log(data)
       if (data.success && data.isEnrolled) {
         setIsEnrolled(true);
       }
@@ -76,11 +82,15 @@ export default function CourseDetailsPage() {
     }
   };
 
+  
+
   const handleEnrollClick = () => {
     const token = localStorage.getItem("token");
     
     if (!token) {
-      alert("Please login to enroll in this course");
+        showWarning("Please login to enroll in this course", {
+          title: "Please login"
+        });
       router.push("/login");
       return;
     }
@@ -93,7 +103,10 @@ export default function CourseDetailsPage() {
     setShowPaymentModal(false);
     
     // Show success message
-    alert("🎉 Successfully enrolled! Welcome to the course.");
+    closeAlert
+    showSuccess("🎉 Successfully enrolled! Welcome to the course.", {
+      title: "Congratulations!",
+    });
     
     // Redirect to my courses
     router.push("/dashboard/my-courses");

@@ -3,11 +3,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import SocialLogin from "./SocialLogin";
 import { useRouter } from "next/navigation";
+import { useAlert } from "@/hooks/useAlert";
+import { parseJwt, useAuth } from "@/contexts/AuthContext";
 
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter()
-
+  const { showSuccess, showError, showLoading, closeAlert } = useAlert();
+  const {setUser, login} = useAuth()
 
 const handleRegisterForm = async (e) => {
   e.preventDefault();
@@ -17,6 +20,7 @@ const handleRegisterForm = async (e) => {
   const name = form.get("name");
   const email = form.get("email");
   const password = form.get("password");
+
 
   try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/auth/register`, {
@@ -30,13 +34,26 @@ const handleRegisterForm = async (e) => {
   if (res.ok && data.token) {
     // Save JWT token
         localStorage.setItem("token", data.token);
-    alert("Registration successful!");
+        const decoded = parseJwt(data.token)
+        setUser(decoded)
+        
+        closeAlert()
+        await showSuccess("Registration successful", {
+          title: "Congratulations",
+        })
     router.push("/")
   } else {
-    alert(data.message);
+    closeAlert();
+        showError(data.message || "Registration failed", {
+          title: "Registration failed"
+        })
   }
   } catch (error) {
     console.log(error)
+    closeAlert();
+    showError("Something went wrong. Please try again", {
+        title: "Connection Error"
+      });
   } finally {
     setLoading(false)
   }

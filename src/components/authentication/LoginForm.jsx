@@ -3,17 +3,27 @@ import React, { useState } from "react";
 import Link from "next/link";
 import SocialLogin from "./SocialLogin";
 import { useRouter } from "next/navigation";
+import { useAlert } from "@/hooks/useAlert";
+import { parseJwt, useAuth } from "@/contexts/AuthContext";
+
 
 
 const LoginForm = () => {
 const [loading, setLoading] = useState(false)
 const [error, setError] = useState("");
 const router = useRouter()
+const { showSuccess, showError, showLoading, closeAlert } = useAlert();
+const {setUser, login} = useAuth()
 
-  const handleLogin = async (e) => {
+
+
+  
+const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+
 
     const form = new FormData(e.target);
     const email = form.get("email");
@@ -34,15 +44,29 @@ const router = useRouter()
       if (res.ok && data.token) {
         // Save JWT token
         localStorage.setItem("token", data.token);
+        // login(data.token)
+        const decoded =parseJwt(data.token)
+        setUser(decoded)
 
-        alert("Login successful!");
+        closeAlert()
+        await showSuccess("Login successful", {
+          title: "Welcome Back",
+        })
         router.push("/")
       } else {
+        closeAlert();
+        showError(data.message || "login failed", {
+          title: "login failed"
+        })
         setError(data.message || "Login failed");
       }
     } catch (err) {
       console.error(err);
-      setError("Something went wrong");
+      closeAlert();
+
+      showError("Something went wrong. Please try again", {
+        title: "Connection Error"
+      });
     } finally {
       setLoading(false);
     }

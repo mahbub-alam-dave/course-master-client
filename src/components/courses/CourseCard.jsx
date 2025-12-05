@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Star, Clock, BookOpen, TrendingUp } from "lucide-react";
+import Image from "next/image";
 
 export default function CourseCard({ course }) {
   const courseId = course._id;
@@ -9,7 +10,9 @@ export default function CourseCard({ course }) {
       {/* Course Thumbnail */}
       <div className="relative h-62 bg-gray-200">
         {course.thumbnail ? (
-          <img
+          <Image
+            width={500}
+            height={500}
             src={course.thumbnail}
             alt={course.title}
             className="w-full h-full object-cover"

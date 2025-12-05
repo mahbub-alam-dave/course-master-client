@@ -28,6 +28,11 @@ const DashboardLayout = ({children}) => {
     dashboardLinks.adminLinks :
     dashboardLinks.userLinks
 
+    const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/"; // optional redirect to homepage
+  };
+
     return (
         <div>
             <div className="bg-gray-50 dark:bg-black">

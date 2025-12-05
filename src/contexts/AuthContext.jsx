@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
-function parseJwt(token) {
+export function parseJwt(token) {
   try {
     const base64Payload = token.split(".")[1];
     const payload = atob(base64Payload); // decode base64

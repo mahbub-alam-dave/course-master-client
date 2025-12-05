@@ -5,12 +5,14 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
 import { X, Loader2 } from "lucide-react";
+import { useAlert } from "@/hooks/useAlert";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(false);
+  const { showSuccess, showError, showLoading, closeAlert, showWarning } = useAlert();
 
   useEffect(() => {
     if (isOpen && course) {
@@ -24,7 +26,10 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        alert("Please login to enroll in this course");
+        closeAlert()
+        showWarning("Please login to enroll in this course", {
+          title: "Please login"
+        });
         onClose();
         return;
       }
@@ -52,12 +57,18 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
       if (data.success) {
         setClientSecret(data.data.clientSecret);
       } else {
-        alert(data.message || "Failed to initialize payment");
+        closeAlert()
+        showError(data.message || "Failed to initialize payment", {
+          title: "Initialization failed"
+        });
         onClose();
       }
     } catch (error) {
       console.error("Error creating payment intent:", error);
-      alert("Failed to initialize payment. Please try again.");
+      closeAlert()
+      showError("Failed to initialize payment. Please try again.", {
+        title: "Initialization failed"
+      });
       onClose();
     } finally {
       setLoading(false);
@@ -79,7 +90,7 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div className="fixed inset-0 z-1000 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
