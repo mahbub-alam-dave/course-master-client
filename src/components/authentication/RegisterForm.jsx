@@ -10,7 +10,7 @@ const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter()
   const { showSuccess, showError, showLoading, closeAlert } = useAlert();
-  const {setUser, login} = useAuth()
+  const {setUser} = useAuth()
 
 const handleRegisterForm = async (e) => {
   e.preventDefault();
@@ -36,7 +36,7 @@ const handleRegisterForm = async (e) => {
         localStorage.setItem("token", data.token);
         const decoded = parseJwt(data.token)
         setUser(decoded)
-        
+
         closeAlert()
         await showSuccess("Registration successful", {
           title: "Congratulations",

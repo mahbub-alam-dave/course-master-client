@@ -13,7 +13,7 @@ const [loading, setLoading] = useState(false)
 const [error, setError] = useState("");
 const router = useRouter()
 const { showSuccess, showError, showLoading, closeAlert } = useAlert();
-const {setUser, login} = useAuth()
+const {setUser} = useAuth()
 
 
 
