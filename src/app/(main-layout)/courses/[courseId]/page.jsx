@@ -18,18 +18,18 @@ import {
 } from "lucide-react";
 import PaymentModal from "@/components/payments/PaymentModal";
 
-const CourseDetailsPage = () => {
+export default function CourseDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     if (params.courseId) {
       fetchCourseDetails();
-      checkEnrollmentStatus()
+      checkEnrollmentStatus();
     }
   }, [params.courseId]);
 
@@ -39,13 +39,12 @@ const CourseDetailsPage = () => {
         `${process.env.NEXT_PUBLIC_API}/api/courses/${params.courseId}`
       );
       const data = await res.json();
-      console.log(data.data)
 
       if (data.success) {
         setCourse(data.data);
-      }  else {
+      } else {
         router.push("/courses");
-      } 
+      }
     } catch (error) {
       console.error("Error fetching course details:", error);
       router.push("/courses");
@@ -59,7 +58,6 @@ const CourseDetailsPage = () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      // Check if user is already enrolled
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API}/api/enrollments/check/${params.id}`,
         {
@@ -78,7 +76,7 @@ const CourseDetailsPage = () => {
     }
   };
 
-    const handleEnrollClick = () => {
+  const handleEnrollClick = () => {
     const token = localStorage.getItem("token");
     
     if (!token) {
@@ -90,9 +88,14 @@ const CourseDetailsPage = () => {
     setShowPaymentModal(true);
   };
 
-    const handlePaymentSuccess = (paymentData) => {
+  const handlePaymentSuccess = (paymentData) => {
     setIsEnrolled(true);
-    alert("Successfully enrolled! Welcome to the course.");
+    setShowPaymentModal(false);
+    
+    // Show success message
+    alert("🎉 Successfully enrolled! Welcome to the course.");
+    
+    // Redirect to my courses
     router.push("/dashboard/my-courses");
   };
 
@@ -128,7 +131,6 @@ const CourseDetailsPage = () => {
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-4xl">
-            {/* Badges */}
             <div className="flex gap-2 mb-4">
               {course.isBestseller && (
                 <span className="px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-full flex items-center gap-1">
@@ -146,11 +148,9 @@ const CourseDetailsPage = () => {
               </span>
             </div>
 
-            {/* Title */}
             <h1 className="text-4xl font-bold mb-4">{course.title}</h1>
             <p className="text-xl opacity-90 mb-6">{course.shortDescription}</p>
 
-            {/* Meta Info */}
             <div className="flex flex-wrap gap-6 mb-6">
               <div className="flex items-center gap-2">
                 <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
@@ -169,7 +169,6 @@ const CourseDetailsPage = () => {
               </div>
             </div>
 
-            {/* Instructor */}
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl font-bold">
                 {course.instructor?.name?.charAt(0) || "I"}
@@ -270,7 +269,6 @@ const CourseDetailsPage = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
-              {/* Preview Video/Image */}
               <div className="relative h-48 bg-gray-200 rounded-lg mb-6 overflow-hidden">
                 {course.thumbnail ? (
                   <img
@@ -285,34 +283,34 @@ const CourseDetailsPage = () => {
                 )}
               </div>
 
-              {/* Price */}
-              <div className="mb-6">
-                {course.discountPrice ? (
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-3xl font-bold text-gray-800">
-                        ${course.discountPrice}
-                      </span>
-                      <span className="text-xl text-gray-400 line-through">
-                        ${course.price}
+              {!isEnrolled && (
+                <div className="mb-6">
+                  {course.discountPrice ? (
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-3xl font-bold text-gray-800">
+                          ${course.discountPrice}
+                        </span>
+                        <span className="text-xl text-gray-400 line-through">
+                          ${course.price}
+                        </span>
+                      </div>
+                      <span className="text-sm text-red-600 font-semibold">
+                        {Math.round(
+                          ((course.price - course.discountPrice) / course.price) *
+                            100
+                        )}
+                        % off
                       </span>
                     </div>
-                    <span className="text-sm text-red-600 font-semibold">
-                      {Math.round(
-                        ((course.price - course.discountPrice) / course.price) *
-                          100
-                      )}
-                      % off
+                  ) : (
+                    <span className="text-3xl font-bold text-gray-800">
+                      ${course.price}
                     </span>
-                  </div>
-                ) : (
-                  <span className="text-3xl font-bold text-gray-800">
-                    ${course.price}
-                  </span>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
 
-              {/* Enroll Button */}
               {isEnrolled ? (
                 <button
                   onClick={handleAccessCourse}
@@ -329,7 +327,6 @@ const CourseDetailsPage = () => {
                 </button>
               )}
 
-              {/* Course Info */}
               <div className="space-y-4 pt-4 border-t">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-gray-600">
@@ -395,7 +392,8 @@ const CourseDetailsPage = () => {
           </div>
         </div>
       </div>
-            {/* Payment Modal */}
+
+      {/* Payment Modal */}
       <PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
@@ -405,5 +403,3 @@ const CourseDetailsPage = () => {
     </div>
   );
 }
-
-export default CourseDetailsPage;
