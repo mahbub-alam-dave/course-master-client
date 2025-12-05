@@ -1,5 +1,6 @@
 # CourseMaster
-## Live link: https://course-master-client-m2ka.vercel.app/
+## Live link: https://course-master-client-m2ka.vercel.app/ (frontend ui)
+## Live link: https://course-master-server-topaz.vercel.app/ (server)
 
 A full-featured, production-ready E-learning platform built using **Next.js**, **Node.js (Express.js)**, and **MongoDB Atlas** following a modular architecture. This project simulates a real-world EdTech platform that supports students, instructors, and administrators with features such as course browsing, purchasing, learning management, and administrative operations.
 
