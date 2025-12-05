@@ -58,26 +58,20 @@ frontend
 
 ## 🛠️ Installation & Setup Guide
 
-### 📌 **1. Clone the Repository**
 
-```bash
-git clone https://github.com/yourusername/course-master.git
-cd course-master
-```
-
-### 📌 **2. Install Dependencies**
+### 📌 **1. Clone Repo & Install Dependencies**
 
 #### Backend
 
 ```bash
-cd backend
+https://github.com/mahbub-alam-dave/course-master-server
 npm install
 ```
 
 #### Frontend
 
 ```bash
-cd ../frontend
+https://github.com/mahbub-alam-dave/course-master-client
 npm install
 ```
 
