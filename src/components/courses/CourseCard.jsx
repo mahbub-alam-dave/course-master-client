@@ -102,7 +102,7 @@ export default function CourseCard({ course }) {
           </div>
           
           <Link
-            href={`http://localhost:3000/courses/${courseId}`}
+            href={`/courses/${courseId}`}
             className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded hover:bg-blue-700 transition-colors"
           >
             View Details
