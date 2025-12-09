@@ -56,7 +56,7 @@ export default function MyCoursesPage() {
   };
 
   const handleCourseClick = (courseId) => {
-    router.push(`/dashboard/learn/${courseId}`);
+    router.push(`/dashboard/user/learn/${courseId}`);
   };
 
   const getProgressColor = (percentage) => {
