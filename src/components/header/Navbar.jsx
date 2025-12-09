@@ -10,7 +10,10 @@ const Navbar = () => {
      const [isOpen, setIsOpen] = useState(false);
 
    const {user, setUser} = useAuth()
-   console.log(user)
+
+
+
+
     useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -47,6 +50,11 @@ const Navbar = () => {
           <li>
             <Link href={"/courses"}>Courses</Link>
           </li>
+          {
+            user && <li>
+            <Link href={"/dashboard"}>Dashboard</Link>
+          </li>
+          }
           <li>
             <Link href={"/"}>About us</Link>
           </li>
