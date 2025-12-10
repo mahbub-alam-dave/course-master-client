@@ -22,8 +22,9 @@ export default function LearnCoursePage() {
   const [course, setCourse] = useState(null);
   const [enrollment, setEnrollment] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentSection, setCurrentSection] = useState(0);
+  const [currentLecture, setCurrentLecture] = useState({ sectionIndex: 0, lectureIndex: 0 });
   const [expandedSections, setExpandedSections] = useState([0]);
+  const [updatingProgress, setUpdatingProgress] = useState(false);
 
   useEffect(() => {
     if (params.courseId) {
@@ -86,6 +87,95 @@ export default function LearnCoursePage() {
     }
   };
 
+  const handleMarkAsComplete = async () => {
+    if (!enrollment) return;
+
+    setUpdatingProgress(true);
+    try {
+      const token = localStorage.getItem("token");
+      const section = course.sections[currentLecture.sectionIndex];
+      const lectureId = `${section.id}-${currentLecture.lectureIndex}`;
+
+      // Check if already completed
+      const alreadyCompleted = enrollment.progress?.completedSections?.some(
+        (s) => s.sectionId === lectureId
+      );
+
+      if (alreadyCompleted) {
+        alert("This lecture is already marked as complete!");
+        setUpdatingProgress(false);
+        return;
+      }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API}/api/enrollments/progress/${enrollment._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            completedLectures: (enrollment.progress?.completedLectures || 0) + 1,
+            completedSections: {
+              sectionId: lectureId,
+            },
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Update local enrollment state
+        setEnrollment(data.data);
+        
+        // Show success message
+        alert("✅ Lecture marked as complete!");
+
+        // Move to next lecture automatically
+        moveToNextLecture();
+      } else {
+        alert(data.message || "Failed to update progress");
+      }
+    } catch (error) {
+      console.error("Error updating progress:", error);
+      alert("Failed to update progress. Please try again.");
+    } finally {
+      setUpdatingProgress(false);
+    }
+  };
+
+  const moveToNextLecture = () => {
+    const currentSection = course.sections[currentLecture.sectionIndex];
+    
+    // Check if there's a next lecture in current section
+    if (currentLecture.lectureIndex + 1 < currentSection.lectures) {
+      setCurrentLecture({
+        sectionIndex: currentLecture.sectionIndex,
+        lectureIndex: currentLecture.lectureIndex + 1,
+      });
+    } 
+    // Move to next section
+    else if (currentLecture.sectionIndex + 1 < course.sections.length) {
+      const nextSectionIndex = currentLecture.sectionIndex + 1;
+      setCurrentLecture({
+        sectionIndex: nextSectionIndex,
+        lectureIndex: 0,
+      });
+      // Expand next section
+      if (!expandedSections.includes(nextSectionIndex)) {
+        setExpandedSections([...expandedSections, nextSectionIndex]);
+      }
+    }
+  };
+
+  const handleLectureClick = (sectionIndex, lectureIndex) => {
+    setCurrentLecture({ sectionIndex, lectureIndex });
+    // Scroll to top of page
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const toggleSection = (index) => {
     setExpandedSections((prev) =>
       prev.includes(index)
@@ -94,11 +184,26 @@ export default function LearnCoursePage() {
     );
   };
 
-  const isLectureCompleted = (lectureId) => {
-    // Check if lecture is in completed sections
+  const isLectureCompleted = (sectionId, lectureIndex) => {
+    const lectureId = `${sectionId}-${lectureIndex}`;
     return enrollment?.progress?.completedSections?.some(
       (section) => section.sectionId === lectureId
     );
+  };
+
+  const getCurrentLectureTitle = () => {
+    if (!course?.sections) return "Introduction";
+    const section = course.sections[currentLecture.sectionIndex];
+    return `${section.title} - Lecture ${currentLecture.lectureIndex + 1}`;
+  };
+
+  const getCurrentLectureNumber = () => {
+    let lectureNumber = 1;
+    for (let i = 0; i < currentLecture.sectionIndex; i++) {
+      lectureNumber += course.sections[i].lectures;
+    }
+    lectureNumber += currentLecture.lectureIndex;
+    return lectureNumber;
   };
 
   if (loading) {
@@ -119,6 +224,12 @@ export default function LearnCoursePage() {
       </div>
     );
   }
+
+  const currentSection = course.sections?.[currentLecture.sectionIndex];
+  const isCurrentLectureCompleted = isLectureCompleted(
+    currentSection?.id,
+    currentLecture.lectureIndex
+  );
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -150,6 +261,7 @@ export default function LearnCoursePage() {
                   controls
                   className="w-full h-full"
                   src={course.previewVideo}
+                  key={`${currentLecture.sectionIndex}-${currentLecture.lectureIndex}`}
                 >
                   Your browser does not support the video tag.
                 </video>
@@ -167,21 +279,33 @@ export default function LearnCoursePage() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Introduction to the Course
+                  {getCurrentLectureTitle()}
                 </h2>
                 <span className="text-sm text-gray-500">
-                  Lecture 1 of {course.totalLectures}
+                  Lecture {getCurrentLectureNumber()} of {course.totalLectures}
                 </span>
               </div>
+
+              {/* Completion Badge */}
+              {isCurrentLectureCompleted && (
+                <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+                  <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+                    <CheckCircle className="w-5 h-5" />
+                    <span className="text-sm font-semibold">
+                      ✅ You&apos;ve completed this lecture
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {/* Progress */}
               <div className="mb-4">
                 <div className="flex items-center justify-between text-sm mb-2">
                   <span className="text-gray-600 dark:text-gray-400">
-                    Your Progress
+                    Course Progress
                   </span>
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    {enrollment?.progress?.completionPercentage || 0}%
+                    {enrollment?.progress?.completedLectures || 0}/{course.totalLectures} lectures • {enrollment?.progress?.completionPercentage || 0}%
                   </span>
                 </div>
                 <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -196,8 +320,31 @@ export default function LearnCoursePage() {
 
               {/* Action Buttons */}
               <div className="flex gap-3">
-                <button className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all">
-                  Mark as Complete
+                <button
+                  onClick={handleMarkAsComplete}
+                  disabled={updatingProgress || isCurrentLectureCompleted}
+                  className={`flex-1 px-4 py-2.5 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
+                    isCurrentLectureCompleted
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:shadow-lg"
+                  }`}
+                >
+                  {updatingProgress ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Updating...
+                    </>
+                  ) : isCurrentLectureCompleted ? (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      Completed
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      Mark as Complete
+                    </>
+                  )}
                 </button>
                 <button className="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
                   <Download className="w-5 h-5" />
@@ -222,28 +369,32 @@ export default function LearnCoursePage() {
               Resources
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-blue-600" />
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    Course Materials.pdf
-                  </span>
+              {course.resources?.downloadableResources > 0 && (
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      Course Materials.pdf
+                    </span>
+                  </div>
+                  <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">
+                    <Download className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  </button>
                 </div>
-                <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">
-                  <Download className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                </button>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-blue-600" />
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    Code Examples.zip
-                  </span>
+              )}
+              {course.resources?.codingExercises > 0 && (
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      Code Examples.zip
+                    </span>
+                  </div>
+                  <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">
+                    <Download className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  </button>
                 </div>
-                <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">
-                  <Download className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                </button>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -263,14 +414,14 @@ export default function LearnCoursePage() {
             </div>
 
             <div className="max-h-[600px] overflow-y-auto">
-              {course.sections?.map((section, index) => (
+              {course.sections?.map((section, sectionIndex) => (
                 <div
                   key={section.id}
                   className="border-b border-gray-200 dark:border-gray-700 last:border-0"
                 >
                   {/* Section Header */}
                   <button
-                    onClick={() => toggleSection(index)}
+                    onClick={() => toggleSection(sectionIndex)}
                     className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     <div className="flex items-center gap-3 flex-1 text-left">
@@ -286,7 +437,7 @@ export default function LearnCoursePage() {
                         </div>
                       </div>
                     </div>
-                    {expandedSections.includes(index) ? (
+                    {expandedSections.includes(sectionIndex) ? (
                       <ChevronUp className="w-5 h-5 text-gray-400" />
                     ) : (
                       <ChevronDown className="w-5 h-5 text-gray-400" />
@@ -294,26 +445,39 @@ export default function LearnCoursePage() {
                   </button>
 
                   {/* Lectures List */}
-                  {expandedSections.includes(index) && (
+                  {expandedSections.includes(sectionIndex) && (
                     <div className="bg-gray-50 dark:bg-gray-900/50">
                       {Array.from({ length: section.lectures }).map((_, lectureIndex) => {
-                        const lectureId = `${section.id}-${lectureIndex}`;
-                        const isCompleted = isLectureCompleted(lectureId);
+                        const isCompleted = isLectureCompleted(section.id, lectureIndex);
+                        const isCurrent = 
+                          currentLecture.sectionIndex === sectionIndex &&
+                          currentLecture.lectureIndex === lectureIndex;
                         
                         return (
                           <button
                             key={lectureIndex}
-                            className="w-full p-4 pl-16 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left group"
+                            onClick={() => handleLectureClick(sectionIndex, lectureIndex)}
+                            className={`w-full p-4 pl-16 flex items-center gap-3 transition-colors text-left group ${
+                              isCurrent
+                                ? "bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-600"
+                                : "hover:bg-gray-100 dark:hover:bg-gray-800"
+                            }`}
                           >
                             {isCompleted ? (
                               <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
                             ) : (
-                              <PlayCircle className="w-5 h-5 text-gray-400 group-hover:text-blue-600 flex-shrink-0" />
+                              <PlayCircle className={`w-5 h-5 flex-shrink-0 ${
+                                isCurrent
+                                  ? "text-blue-600"
+                                  : "text-gray-400 group-hover:text-blue-600"
+                              }`} />
                             )}
                             <div className="flex-1 min-w-0">
                               <div className={`text-sm font-medium ${
                                 isCompleted
                                   ? "text-green-600 dark:text-green-400"
+                                  : isCurrent
+                                  ? "text-blue-600 dark:text-blue-400"
                                   : "text-gray-900 dark:text-white"
                               }`}>
                                 Lecture {lectureIndex + 1}
