@@ -18,13 +18,13 @@ const SocialLogin = () => {
   return (
     <div className="flex justify-center items-center gap-4 mb-6">
       <div
-        onClick={() => router.push("http://localhost:5000/api/auth/github")}
+        onClick={() => router.push(`${NEXT_PUBLIC_API}/api/auth/github`)}
         className="w-[50px] h-[50px] bg-gray-200 dark:bg-gray-700 rounded-full flex justify-center items-center cursor-pointer"
       >
         <FaGithub size={22} />
       </div>
       <div
-        onClick={() => router.push("http://localhost:5000/api/auth/google")}
+        onClick={() => router.push(`${NEXT_PUBLIC_API}/api/auth/google`)}
         className="w-[50px] h-[50px] bg-gray-200 dark:bg-gray-700 rounded-full flex justify-center items-center cursor-pointer"
       >
         <FcGoogle size={22} />
