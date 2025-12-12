@@ -8,11 +8,11 @@ import Swal from "sweetalert2";
 const SocialLogin = () => {
   const router = useRouter();
 
-  const handleSocialLogin = (providerName) => {
+/*   const handleSocialLogin = (providerName) => {
     console.log("social login", providerName);
     // callbackUrl off
     signIn(providerName, { redirect: false });
-  };
+  }; */
 
 
   return (
