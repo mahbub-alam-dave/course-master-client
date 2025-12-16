@@ -48,7 +48,7 @@ const DashboardLayout = ({ children }) => {
       description: "Edit & delete courses"
     },
     {
-      href: "/dashboard/users",
+      href: "/dashboard/manage-users",
       icon: Users,
       label: "Manage Users",
       description: "User management"

@@ -43,7 +43,7 @@ export default function DashboardOverviewPage() {
 
       // Fetch overview stats
       const statsRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/admin/stats?dateRange=${dateRange}&courseId=${selectedCourse}`,
+        `${process.env.NEXT_PUBLIC_API}/api/admin/stats?dateRange=${dateRange}&courseId=${selectedCourse}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -56,7 +56,7 @@ export default function DashboardOverviewPage() {
 
       // Fetch recent enrollments
       const enrollmentsRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/admin/recent-enrollments?limit=5`,
+        `${process.env.NEXT_PUBLIC_API}/api/admin/recent-enrollments?limit=5`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -69,7 +69,7 @@ export default function DashboardOverviewPage() {
 
       // Fetch top courses
       const topCoursesRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/admin/top-courses?limit=5`,
+        `${process.env.NEXT_PUBLIC_API}/api/admin/top-courses?limit=5`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -95,12 +95,13 @@ export default function DashboardOverviewPage() {
 
       // Fetch revenue chart data
       const revenueRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/admin/revenue-chart?dateRange=${dateRange}`,
+        `${process.env.NEXT_PUBLIC_API}/api/admin/revenue-chart?dateRange=${dateRange}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const revenueChartData = await revenueRes.json();
+      console.log(revenueChartData)
 
       if (revenueChartData.success) {
         setRevenueData(revenueChartData.data);
@@ -450,7 +451,7 @@ export default function DashboardOverviewPage() {
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                          {enrollment.user.name.charAt(0).toUpperCase()}
+                          {enrollment?.user?.name?.charAt(0).toUpperCase()}
                         </div>
                         <div>
                           <div className="font-medium text-gray-900 dark:text-white">
