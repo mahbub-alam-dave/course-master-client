@@ -30,11 +30,23 @@ const DashboardLayout = ({ children }) => {
       description: "Dashboard analytics"
     },
     {
+      href: "/dashboard/analytics",
+      icon: TrendingUp,
+      label: "Analytics",
+      description: "Revenue & insights"
+    },
+        {
+      href: "/dashboard/manage-courses",
+      icon: Settings,
+      label: "Manage Courses",
+      description: "Edit & delete courses"
+    },
+/*     {
       href: "/dashboard/courses",
       icon: BookOpen,
       label: "All Courses",
       description: "View all courses"
-    },
+    }, */
     {
       href: "/dashboard/add-course",
       icon: PlusCircle,
@@ -42,23 +54,12 @@ const DashboardLayout = ({ children }) => {
       description: "Create new course"
     },
     {
-      href: "/dashboard/manage-courses",
-      icon: Settings,
-      label: "Manage Courses",
-      description: "Edit & delete courses"
-    },
-    {
       href: "/dashboard/manage-users",
       icon: Users,
       label: "Manage Users",
       description: "User management"
     },
-    {
-      href: "/dashboard/analytics",
-      icon: TrendingUp,
-      label: "Analytics",
-      description: "Revenue & insights"
-    }
+
   ];
 
   const userLinks = [
