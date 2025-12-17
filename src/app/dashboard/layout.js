@@ -62,6 +62,21 @@ const DashboardLayout = ({ children }) => {
 
   ];
 
+  const instructorLinks = [
+    {
+      href: "/dashboard",
+      icon: LayoutDashboard,
+      label: "Overview",
+      description: "Your learning dashboard"
+    },
+        {
+      href: "/dashboard/add-courses",
+      icon: LayoutDashboard,
+      label: "Add Courses",
+      description: "Add Courses"
+    },
+  ]
+
   const userLinks = [
     {
       href: "/dashboard",
@@ -89,7 +104,8 @@ const DashboardLayout = ({ children }) => {
     }
   ];
 
-  const links = user && user.role === "admin" ? adminLinks : userLinks;
+  const links = user && user.role === "admin" ? adminLinks 
+  : user && user.role === "instructor" ? instructorLinks : userLinks;
 
   const handleLogout = () => {
     localStorage.removeItem("token");

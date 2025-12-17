@@ -82,7 +82,7 @@ export default function DashboardOverviewPage() {
 
       // Fetch all courses for filter
       const coursesRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/courses?limit=100`,
+        `${process.env.NEXT_PUBLIC_API}/api/courses?limit=100`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
