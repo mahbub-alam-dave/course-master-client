@@ -154,7 +154,7 @@ export default function BecomeInstructorPage() {
       };
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/instructor-applications/apply`,
+        `${process.env.NEXT_PUBLIC_API}/api/instructor-applications/apply`,
         {
           method: "POST",
           headers: {
